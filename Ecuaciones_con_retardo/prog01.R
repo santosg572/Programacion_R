@@ -1,28 +1,44 @@
-Solucion_Ecu_Dif <- function(valini=0, fun=0){
+Solucion_Ecu_Dif_Atras <- function(valini=0, del1=0, fun=0){
   np1 = length(fun)
-  del1 = fun[2]-fun[1]
   funN = rep(0,np1)
 
-  funN[1] = valini
-  x1 = valini
-  for (i in 2:np1){
-    x2 = x1 + del1 * fun[i-1]
-    funN[i] = x2
-    x1 = x2
+  funN[np1] = valini
+  x2 = valini
+  for (i in (np1-1):1){
+    x1 = x2 - del1 * fun[i+1]
+    funN[i] = x1
+    x2 = x1
   }
   ret = funN
 }
 
-t1 = 0
-t2 = 4
-x0 = 1
+x2 = .1
+t1 = 0+10
+t2 = x2+10
+x0 = exp(t2)
 del1 = .001
 
 np1 = round((t2-t1)/del1 +1)
 
-fun = rep(1,np1)
+fun = rep(x0,np1)
+t = seq(t1, t2, length.out = np1)
 
-res = Solucion_Ecu_Dif(x0, fun)
+tt = c()
+ff = c()
 
-plot(res, type='l')
+for (i in 1:80){
+   tt = c(t, tt)
+   res = Solucion_Ecu_Dif_Atras(x0, del1, fun)
+   ff = c(res, ff)
+   x0 = res[1]
+   fun = res
+   t = t-x2
+}
+
+print(tt)
+plot(tt, ff, type='l')
+
+yy = exp(tt)
+
+points(tt, yy, type='l', col='red')
 
